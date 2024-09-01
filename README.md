@@ -36,13 +36,6 @@ Este proyecto es una aplicación de e-commerce completa que incluye la gestión 
     npm install
     ```
 
-4. Crea un archivo `.env` basado en el archivo `.env.template`:
-    ```env
-    PORT=3000
-    MONGODB_URI=mongodb://localhost:27017/mi-base-de-datos
-    JWT_SECRET=mi-secreto
-    ```
-
 ## Endpoints
 
 ### Usuarios
