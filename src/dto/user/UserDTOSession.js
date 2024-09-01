@@ -1,10 +1,10 @@
 export default class UserDTOSession {
-    id;
-    fullName;
+    name;
     role;
+    id;
     constructor(user) {
-        id = user._id;
-        fullName = `${user.firstName } ..`
-        role = user.role;
+        (this.name = `${user.firstName} ${user.lastName}`),
+            (this.role = user.role),
+            (this.id = user.id);
     }
 }

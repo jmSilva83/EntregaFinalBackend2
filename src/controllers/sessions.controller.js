@@ -1,8 +1,22 @@
 import jwt from 'jsonwebtoken';
 import config from '../config/config.js';
 
-const register = (req, res) => {
-    res.sendSuccess('Registered successfully');
+const register = async (req, res) => {
+    try {
+        // Supongamos que req.user es el usuario registrado
+        const user = req.user;
+        const sessionUser = {
+            name: `${user.firstName} ${user.lastName}`,
+            role: user.role,
+            id: user._id,
+        };
+        const token = jwt.sign(sessionUser, config.auth.jwt.SECRET, {
+            expiresIn: '1d',
+        });
+        res.cookie(config.auth.jwt.COOKIE, token).sendSuccess('Registered successfully');
+    } catch (error) {
+        res.status(500).send({ error: 'Registration failed' });
+    }
 };
 
 const login = async (req, res) => {

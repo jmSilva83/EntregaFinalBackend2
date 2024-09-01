@@ -1,7 +1,7 @@
 import usersController from '../controllers/users.controller.js';
 import BaseRouter from './BaseRouter.js';
 import { authRoles } from '../middlewares/authroles.js';
-import PresentUserDTO from '../dto/user/PresentUserDTO.js';
+import UserDTOSession from '../dto/user/UserDTOSession.js';
 
 class UsersRouter extends BaseRouter {
     init() {
@@ -11,7 +11,7 @@ class UsersRouter extends BaseRouter {
         this.put('/users/:id', ['ADMIN'], usersController.updateUser);
         this.delete('/users/:id', ['ADMIN'], usersController.deleteUser);
         this.get('/current', ['AUTHORIZED'], authRoles, (req, res) => {
-            const userDTO = new PresentUserDTO(req.user);
+            const userDTO = new UserDTOSession(req.user);
             res.json(userDTO);
         });
     }

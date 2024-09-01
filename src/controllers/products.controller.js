@@ -1,7 +1,5 @@
 import mongoose from 'mongoose';
-import ProductManager from '../db/mongo/ProductManager.js';
-
-const productManager = new ProductManager();
+import ProductDAO from '../db/dao/productDAO.js';
 
 const getProducts = async (req, res) => {
     try {
@@ -24,8 +22,8 @@ const getProducts = async (req, res) => {
             sort: sortObject,
         };
 
-        const products = await productManager.getProducts(queryObject, options);
-        const totalProducts = await productManager.countDocuments(queryObject);
+        const products = await ProductDAO.paginate(queryObject, options);
+        const totalProducts = await ProductDAO.count(queryObject);
 
         const prevLink = products.hasPrevPage
             ? `http://localhost:8080/api/products?page=${products.prevPage}&limit=${limit}`
@@ -55,7 +53,7 @@ const getProductById = async (req, res) => {
         const { id } = req.params;
         if (!mongoose.Types.ObjectId.isValid(id))
             throw new Error('Invalid product ID');
-        const product = await productManager.getProductById(id);
+        const product = await ProductDAO.findById(id);
         if (!product) throw new Error('Product not found');
         res.json(product);
     } catch (error) {
@@ -66,15 +64,17 @@ const getProductById = async (req, res) => {
 const createProduct = async (req, res) => {
     try {
         const { code, stock } = req.body;
-        const exists = await productManager.findProductByCode(code);
+        const exists = await ProductDAO.findProductByCode(code);
         if (exists) {
-            const updatedProduct =
-                await productManager.updateProductStockByCode(code, stock);
+            const updatedProduct = await ProductDAO.updateStockByCode(
+                code,
+                stock
+            );
             if (!updatedProduct)
                 throw new Error('Error updating product stock');
             res.json(updatedProduct);
         } else {
-            const product = await productManager.createProduct(req.body);
+            const product = await ProductDAO.create(req.body);
             res.status(201).json(product);
         }
     } catch (error) {
@@ -87,7 +87,7 @@ const updateProduct = async (req, res) => {
         const { id } = req.params;
         if (!mongoose.Types.ObjectId.isValid(id))
             throw new Error('Invalid product ID');
-        const product = await productManager.updateProduct(id, req.body);
+        const product = await ProductDAO.update(id, req.body);
         if (!product) throw new Error('Product not found');
         res.json(product);
     } catch (error) {
@@ -100,7 +100,7 @@ const deleteProduct = async (req, res) => {
         const { id } = req.params;
         if (!mongoose.Types.ObjectId.isValid(id))
             throw new Error('Invalid product ID');
-        const product = await productManager.deleteProduct(id);
+        const product = await ProductDAO.delete(id);
         if (!product) throw new Error('Product not found');
         res.json(product);
     } catch (error) {

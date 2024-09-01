@@ -1,12 +1,16 @@
 import usersModel from '../mongo/models/user.model.js';
 
-export default class UsersDao {
-    get() {
+class UsersDAO {
+    getAll() {
         return usersModel.find({});
     }
 
-    getOne(params) {
-        return usersModel.findOne(params);
+    getById(userId) {
+        return usersModel.findById(userId);
+    }
+
+    getByEmail(userEmail) {
+        return usersModel.findOne({ email: userEmail });
     }
 
     create(user) {
@@ -14,10 +18,12 @@ export default class UsersDao {
     }
 
     update(id, user) {
-        return usersModel.findByIdAndUpdate(id, { set: user });
+        return usersModel.findByIdAndUpdate(id, { $set: user }, { new: true });
     }
 
     delete(id) {
         return usersModel.deleteOne({ _id: id });
     }
 }
+
+export default new UsersDAO();

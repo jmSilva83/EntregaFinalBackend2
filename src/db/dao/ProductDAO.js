@@ -1,4 +1,4 @@
-import productModel from './models/product.model.js';
+import productModel from '../mongo/models/product.model.js';
 
 class ProductDAO {
     async find(query) {
@@ -23,6 +23,10 @@ class ProductDAO {
 
     async count(query) {
         return productModel.countDocuments(query);
+    }
+
+    async paginate(queryObject, options) {
+        return productModel.paginate(queryObject, options);
     }
 }
 

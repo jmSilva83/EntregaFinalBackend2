@@ -15,7 +15,7 @@ config({
             ? './.env.dev'
             : options.mode === 'stg'
             ? './.env.stg'
-            : './.env.prod'
+            : './.env.prod',
 });
 
 export default {
@@ -31,11 +31,5 @@ export default {
             COOKIE: process.env.JWT_COOKIE,
             SECRET: process.env.JWT_SECRET,
         },
-        github: {
-            CLIENT_ID: process.env.GITHUB_CLIENT,
-        },
-    },
-    postgres: {
-        URL: process.env.POSTGRES_URL, //Postgres es un poquito más difícil de conectar.
     },
 };
