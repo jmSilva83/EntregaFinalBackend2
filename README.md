@@ -63,3 +63,7 @@ Este proyecto es una aplicación de e-commerce completa que incluye la gestión 
 - **DELETE /api/carts/:cid** - Limpiar el carrito
 - **POST /api/carts/:cid/purchase** - Finalizar la compra y generar un ticket
 
+### Licencia
+
+Este proyecto está bajo la Licencia MIT. Consulta el archivo [LICENSE](LICENSE) para más detalles.
+
