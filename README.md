@@ -1,4 +1,4 @@
-# Proyecto de E-commerce con Node:JS
+# Proyecto de E-commerce con Node.JS
 
 Este proyecto es una aplicación de e-commerce completa que incluye la gestión de usuarios, autenticación, productos, carritos de compras y finalización de compras. La aplicación está construida con Node.js, Express y MongoDB, utilizando JWT para la autenticación.
 
