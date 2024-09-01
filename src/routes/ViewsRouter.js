@@ -1,6 +1,6 @@
 import BaseRouter from './BaseRouter.js';
-import productModel from '../managers/mongo/models/product.model.js';
-import cartModel from '../managers/mongo/models/cart.model.js';
+import productModel from '../db/mongo/models/product.model.js';
+import cartModel from '../db/mongo/models/cart.model.js';
 
 class ViewsRouter extends BaseRouter {
     init() {

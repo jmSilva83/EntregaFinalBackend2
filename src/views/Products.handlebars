@@ -10,6 +10,7 @@
         <p><strong>Code:</strong> {{this.code}}</p>
         <a href="/products/{{this._id}}">Ver detalles</a>
         <form action="/carts/:cid/products/{{this._id}}" method="post">
+        <input type="number" name="quantity" min="1" value="1" required>
         <button type="submit">Agregar al carrito</button>
         </form>
     </div>

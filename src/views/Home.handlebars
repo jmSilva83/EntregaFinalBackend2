@@ -1,17 +1,19 @@
 {{!< main}}
-<div>
-    <header>
-        <h1>Bienvenido a nuestra tienda</h1>
-    </header>
+<header class="home-header">
+    <h1>Bienvenido a nuestra tienda</h1>
+    <nav class="home-nav">
+        <a href="/login" class="home-cta-button">Iniciar sesión</a>
+        <a href="/register" class="home-cta-button">Registrarse</a>
+    </nav>
+</header>
 
-    <div class="home-container">
+<div class="home-container">
     <main>
         <p>Explora nuestros productos y aprovecha nuestras ofertas exclusivas.</p>
-        <section class="cta-buttons">
-            <a href="/login" class="cta-button">Iniciar sesión</a>
-            <a href="/register" class="cta-button">Registrarse</a>
+        <section class="home-cta-section">
+            <a href="/products" class="home-cta-button">Ver productos</a>
         </section>
     </main>
-    </div>
+</div>
     <script src="/js/home.js"></script>
 </body>

@@ -6,12 +6,11 @@ import cookieParser from 'cookie-parser';
 import { Server } from 'socket.io';
 
 import __dirname from './utils.js';
-import viewsRouter from './routes/views.router.js';
 import ViewsRouter from './routes/ViewsRouter.js';
-import sessionRouter from './routes/sessions.router.js';
 import SessionsRouter from './routes/SessionsRouter.js';
-import productsRouter from './routes/products.router.js';
-import cartsRouter from './routes/carts.router.js';
+import productsRouter from './routes/ProductsRouter.js';
+import UsersRouter from './routes/UsersRouter.js';
+import cartsRouter from './routes/CartsRouter.js';
 import config from './config/config.js';
 import initializePassportConfig from './config/passport.config.js';
 
@@ -44,6 +43,8 @@ app.use('/', ViewsRouter);
 app.use('/api/products', productsRouter);
 app.use('/api/carts', cartsRouter);
 app.use('/api/sessions', SessionsRouter);
+app.use('/api/users',UsersRouter);
+
 
 app.use('*', (req, res) => {
     res.status(404).render('404');  

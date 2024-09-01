@@ -1,4 +1,4 @@
-{{!< main}}
+{{!-- {{!< main}}
 <h1>Carrito de Compras</h1>
 <div class="container">
   {{#each cart.products}}
@@ -12,4 +12,47 @@
       </form>
     </div>
   {{/each}}
+</div> --}}
+
+{{!< main}}
+<h1>Mi Carrito</h1>
+<div class="container">
+    {{#if cart.products.length}}
+    <table>
+        <thead>
+            <tr>
+                <th>Producto</th>
+                <th>Precio</th>
+                <th>Cantidad</th>
+                <th>Subtotal</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            {{#each cart.products}}
+            <tr>
+                <td>{{this.product.title}}</td>
+                <td>${{this.product.price}}</td>
+                <td>{{this.quantity}}</td>
+                <td>${{this.quantity * this.product.price}}</td>
+                <td>
+                    <form action="/carts/{{../cart._id}}/products/{{this.product._id}}" method="post">
+                        <button type="submit" name="action" value="remove">Eliminar</button>
+                    </form>
+                    <form action="/carts/{{../cart._id}}/products/{{this.product._id}}" method="post">
+                        <input type="number" name="quantity" min="1" value="{{this.quantity}}" />
+                        <button type="submit" name="action" value="update">Actualizar Cantidad</button>
+                    </form>
+                </td>
+            </tr>
+            {{/each}}
+        </tbody>
+    </table>
+    <form action="/carts/{{cart._id}}/purchase" method="post">
+        <button type="submit">Finalizar Compra</button>
+    </form>
+    {{else}}
+    <p>El carrito está vacío.</p>
+    {{/if}}
 </div>
+
