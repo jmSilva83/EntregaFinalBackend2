@@ -1,35 +1,38 @@
-import CartDAO from '../db/dao/CartDAO.js';
-import productModel from '../db/mongo/models/product.model.js';
+import { productsService, TicketsService } from '../services/services.js';
 import { v4 as uuidv4 } from 'uuid';
+import cartsService from '../services/CartServices.js';
+import ticketsService from '../services/ticketService.js';
 
 const getAllCarts = async (req, res) => {
     try {
-        const carts = await CartDAO.find({});
-        res.json(carts);
+        const carts = await cartsService.getAllCarts(); 
+        res.status(200).json({ status: 'success', data: carts });
     } catch (error) {
-        res.status(500).json({ error: error.message });
+        res.status(500).json({ status: 'error', message: error.message });
     }
 };
 
 const getCartById = async (req, res) => {
     const { cid } = req.params;
     try {
-        const cart = await CartDAO.findById(cid);
+        const cart = await cartsService.getCartById(cid); // Asegúrate de que este método exista en CartService
         if (!cart) {
-            return res.status(404).json({ error: 'Cart not found' });
+            return res
+                .status(404)
+                .json({ status: 'error', message: 'Cart not found' });
         }
-        res.json(cart);
+        res.status(200).json({ status: 'success', data: cart });
     } catch (error) {
-        res.status(500).json({ error: error.message });
+        res.status(500).json({ status: 'error', message: error.message });
     }
 };
 
 const createCart = async (req, res) => {
     try {
-        const newCart = await CartDAO.create();
-        res.status(201).json(newCart);
+        const newCart = await cartsService.createCart(); // Asegúrate de que este método exista en CartService
+        res.status(201).json({ status: 'success', data: newCart });
     } catch (error) {
-        res.status(500).json({ error: error.message });
+        res.status(500).json({ status: 'error', message: error.message });
     }
 };
 
@@ -39,30 +42,36 @@ const addProductToCart = async (req, res) => {
 
     try {
         if (quantity <= 0) {
-            return res.status(400).json({ error: 'Quantity must be greater than zero' });
+            return res.status(400).json({
+                status: 'error',
+                message: 'Quantity must be greater than zero',
+            });
         }
 
-        const cart = await CartDAO.findById(cid);
-        const product = await productModel.findById(pid);
+        const cart = await cartsService.getCartById(cid); // Asegúrate de que este método exista en CartService
+        const product = await productsService.getById(pid);
 
         if (!cart) {
-            return res.status(404).json({ error: 'Cart not found' });
+            return res
+                .status(404)
+                .json({ status: 'error', message: 'Cart not found' });
         }
         if (!product) {
-            return res.status(404).json({ error: 'Product not found' });
+            return res
+                .status(404)
+                .json({ status: 'error', message: 'Product not found' });
         }
 
-        const existingProduct = cart.products.find((p) => p.product.toString() === pid);
-        if (existingProduct) {
-            await CartDAO.updateProductQuantity(cid, pid, existingProduct.quantity + quantity);
-        } else {
-            await CartDAO.addProductToCart(cid, { product: pid, quantity });
-        }
+        await cartsService.addProductToCart(cid, pid, quantity); // Asegúrate de que este método exista en CartService
 
-        const updatedCart = await CartDAO.findById(cid);
-        res.status(200).json(updatedCart);
+        const updatedCart = await cartsService.getCartById(cid); // Asegúrate de que este método exista en CartService
+        res.status(200).json({
+            status: 'success',
+            message: 'Product added successfully',
+            cart: updatedCart,
+        });
     } catch (error) {
-        res.status(500).json({ error: error.message });
+        res.status(500).json({ status: 'error', message: error.message });
     }
 };
 
@@ -72,23 +81,38 @@ const updateProductQuantity = async (req, res) => {
 
     try {
         if (quantity <= 0) {
-            return res.status(400).json({ error: 'Quantity must be greater than zero' });
+            return res.status(400).json({
+                status: 'error',
+                message: 'Quantity must be greater than zero',
+            });
         }
 
-        const cart = await CartDAO.findById(cid);
-        const product = await productModel.findById(pid);
+        const cart = await cartsService.getCartById(cid); // Asegúrate de que este método exista en CartService
+        const product = await productsService.getById(pid);
 
         if (!cart) {
-            return res.status(404).json({ error: 'Cart not found' });
+            return res
+                .status(404)
+                .json({ status: 'error', message: 'Cart not found' });
         }
         if (!product) {
-            return res.status(404).json({ error: 'Product not found' });
+            return res
+                .status(404)
+                .json({ status: 'error', message: 'Product not found' });
         }
 
-        const updatedCart = await CartDAO.updateProductQuantity(cid, pid, quantity);
-        res.status(200).json(updatedCart);
+        const updatedCart = await cartsService.updateProductQuantity(
+            cid,
+            pid,
+            quantity
+        ); // Asegúrate de que este método exista en CartService
+        res.status(200).json({
+            status: 'success',
+            message: 'Product quantity updated successfully',
+            cart: updatedCart,
+        });
     } catch (error) {
-        res.status(500).json({ error: error.message });
+        res.status(500).json({ status: 'error', message: error.message });
     }
 };
 
@@ -97,16 +121,25 @@ const updateCartProducts = async (req, res) => {
     const { products } = req.body;
 
     try {
-        const cart = await CartDAO.findById(cid);
+        const cart = await cartsService.getCartById(cid); // Asegúrate de que este método exista en CartService
 
         if (!cart) {
-            return res.status(404).json({ error: 'Cart not found' });
+            return res
+                .status(404)
+                .json({ status: 'error', message: 'Cart not found' });
         }
 
-        const updatedCart = await CartDAO.updateCartProducts(cid, products);
-        res.status(200).json(updatedCart);
+        const updatedCart = await cartsService.updateCartProducts(
+            cid,
+            products
+        ); // Asegúrate de que este método exista en CartService
+        res.status(200).json({
+            status: 'success',
+            message: 'Cart products updated successfully',
+            cart: updatedCart,
+        });
     } catch (error) {
-        res.status(500).json({ error: error.message });
+        res.status(500).json({ status: 'error', message: error.message });
     }
 };
 
@@ -114,16 +147,22 @@ const removeProductFromCart = async (req, res) => {
     const { cid, pid } = req.params;
 
     try {
-        const cart = await CartDAO.findById(cid);
+        const cart = await cartsService.getCartById(cid); // Asegúrate de que este método exista en CartService
 
         if (!cart) {
-            return res.status(404).json({ error: 'Cart not found' });
+            return res
+                .status(404)
+                .json({ status: 'error', message: 'Cart not found' });
         }
 
-        const updatedCart = await CartDAO.removeProductFromCart(cid, pid);
-        res.status(200).json(updatedCart);
+        const updatedCart = await cartsService.removeProductFromCart(cid, pid); // Asegúrate de que este método exista en CartService
+        res.status(200).json({
+            status: 'success',
+            message: 'Product removed successfully',
+            cart: updatedCart,
+        });
     } catch (error) {
-        res.status(500).json({ error: error.message });
+        res.status(500).json({ status: 'error', message: error.message });
     }
 };
 
@@ -131,74 +170,104 @@ const clearCart = async (req, res) => {
     const { cid } = req.params;
 
     try {
-        const cart = await CartDAO.findById(cid);
+        const cart = await cartsService.getCartById(cid); // Asegúrate de que este método exista en CartService
 
         if (!cart) {
-            return res.status(404).json({ error: 'Cart not found' });
+            return res
+                .status(404)
+                .json({ status: 'error', message: 'Cart not found' });
         }
 
-        await CartDAO.clearCart(cid);
+        await cartsService.clearCart(cid); // Asegúrate de que este método exista en CartService
         res.status(204).end();
     } catch (error) {
-        res.status(500).json({ error: error.message });
+        res.status(500).json({ status: 'error', message: error.message });
     }
 };
 
 const purchaseCart = async (req, res) => {
-    const { cid } = req.params;
+    const purchaserId = req.user.id;
 
     try {
-        const cart = await CartDAO.findById(cid);
+        const purchaser = await userService.getUser(purchaserId);
+        if (!purchaser || !purchaser.email) {
+            return res.status(404).json({ status: "error", message: "Couldn't complete purchase" });
+        }
+        const email = purchaser.email;
+
+        const cartId = req.params.cid;
+        const cart = await cartsService.getCartById(cartId);
         if (!cart) {
-            return res.status(404).json({ error: 'Cart not found' });
+            return res.status(404).json({ status: "error", message: "Cart not found" });
         }
 
-        let totalAmount = 0;
-        const failedProducts = [];
+        const cartProducts = cart.products;
+        const inStock = [];
+        const outOfStock = [];
 
-        for (const item of cart.products) {
-            const product = await productModel.findById(item.product);
+        // Verificar el stock de los productos
+        for (const item of cartProducts) {
+            const product = await productsService.getCartById(item.productId);
             if (!product) {
-                failedProducts.push(item.product);
+                outOfStock.push({ id: item.product, quantity: item.quantity, available: 0 });
                 continue;
             }
 
             if (product.stock >= item.quantity) {
-                product.stock -= item.quantity;
-                await product.save();
-
-                totalAmount += product.price * item.quantity;
+                inStock.push({
+                    id: product._id,
+                    total: product.price * item.quantity,
+                    quantity: item.quantity,
+                    stock: product.stock,
+                });
             } else {
-                failedProducts.push(item.product);
+                outOfStock.push({
+                    id: product._id,
+                    quantity: item.quantity,
+                    available: product.stock,
+                });
             }
         }
 
-        if (totalAmount > 0) {
-            const newTicket = new ticketModel({
-                code: uuidv4(),
-                amount: totalAmount,
-                purchaser: req.user.email
-            });
-
-            await newTicket.save();
-        }
-
-        await CartDAO.updateCartProducts(cid, cart.products.filter(p => failedProducts.includes(p.product)));
-
-        if (failedProducts.length > 0) {
-            res.status(200).json({
-                status: 'success',
-                message: 'Purchase completed with some products not available',
-                failedProducts
-            });
-        } else {
-            res.status(200).json({
-                status: 'success',
-                message: 'Purchase completed successfully'
+        if (outOfStock.length > 0) {
+            return res.status(406).json({
+                status: "error",
+                message: "Some products are out of stock",
+                payload: outOfStock,
             });
         }
+
+        if (inStock.length === 0) {
+            return res.status(406).json({
+                status: "error",
+                message: "Your cart is empty",
+            });
+        }
+
+        const totalAmount = inStock.reduce((sum, product) => sum + product.total, 0);
+        const purchaseInfo = {
+            amount: totalAmount,
+            purchaser: email,
+            purchaseDatetime: new Date().toISOString(),
+            code: uuidv4(),
+        };
+
+        const ticket = await ticketsService.createTicket(purchaseInfo);
+
+        for (const product of inStock) {
+            const newStock = product.stock - product.quantity;
+            await productsService.updateStock(product.id, newStock);
+        }
+
+        await cartsService.clearCart(cartId);
+
+        res.status(201).json({
+            status: "success",
+            message: "Purchase completed successfully",
+            payload: ticket,
+        });
     } catch (error) {
-        res.status(500).json({ error: error.message });
+        res.status(500).json({ status: 'error', message: error.message });
     }
 };
 
@@ -211,6 +280,5 @@ export default {
     updateCartProducts,
     removeProductFromCart,
     clearCart,
-    purchaseCart
+    purchaseCart,
 };
-

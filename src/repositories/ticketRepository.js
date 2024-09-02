@@ -1,6 +1,6 @@
-import TicketDAO from '../dao/ticketDAO.js';
+import TicketDAO from '../db/dao/TicketDAO.js';
 
-class TicketRepository {
+export default class TicketRepository {
     async createTicket(ticketData) {
         return await TicketDAO.createTicket(ticketData);
     }
@@ -14,4 +14,4 @@ class TicketRepository {
     }
 }
 
-export default new TicketRepository();
+

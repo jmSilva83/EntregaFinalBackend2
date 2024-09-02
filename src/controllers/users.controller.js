@@ -1,4 +1,3 @@
-// src/controllers/users.controller.js
 import UserDao from '../db/dao/UserDao.js';
 import UserDTOSession from '../dto/user/UserDTOSession.js';
 
