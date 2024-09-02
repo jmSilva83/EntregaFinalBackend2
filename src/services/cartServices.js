@@ -1,6 +1,4 @@
 import { CartRepository } from '../repositories/CartRepository.js'; 
-
-
 class cartService {
     constructor() {
         this.cartRepository = new CartRepository();
