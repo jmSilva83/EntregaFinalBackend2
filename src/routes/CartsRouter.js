@@ -1,6 +1,7 @@
 import BaseRouter from './BaseRouter.js';
 import cartsController from '../controllers/carts.controller.js';
 import { authRoles } from '../middlewares/authroles.js';
+import { authMiddleware } from '../middlewares/auth.middleware.js';
 
 class CartsRouter extends BaseRouter {
     init() {
@@ -38,8 +39,8 @@ class CartsRouter extends BaseRouter {
             cartsController.clearCart
         );
         this.post(
-            '/:cid/purchase',
-            ['PUBLIC'],
+            '/:cid/purchase', 
+            ['PUBLIC'], authMiddleware,
             authRoles(['USER']),
             cartsController.purchaseCart
         );
