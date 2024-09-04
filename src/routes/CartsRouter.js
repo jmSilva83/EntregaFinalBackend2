@@ -11,37 +11,37 @@ class CartsRouter extends BaseRouter {
         this.post(
             '/:cid/products/:pid',
             ['PUBLIC'],
-            authRoles(['USER']),
+            authRoles(['user']),
             cartsController.addProductToCart
         );
         this.put(
             '/:cid/products/:pid',
             ['PUBLIC'],
-            authRoles(['USER']),
+            authRoles(['user']),
             cartsController.updateProductQuantity
         );
         this.put(
             '/:cid',
             ['PUBLIC'],
-            authRoles(['USER']),
+            authRoles(['user']),
             cartsController.updateCartProducts
         );
         this.delete(
             '/:cid/products/:pid',
             ['PUBLIC'],
-            authRoles(['USER']),
+            authRoles(['user']),
             cartsController.removeProductFromCart
         );
         this.delete(
             '/:cid',
             ['PUBLIC'],
-            authRoles(['USER']),
+            authRoles(['user']),
             cartsController.clearCart
         );
         this.post(
             '/:cid/purchase', 
             ['PUBLIC'], authMiddleware,
-            authRoles(['USER']),
+            authRoles(['user']),
             cartsController.purchaseCart
         );
     }

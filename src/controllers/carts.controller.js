@@ -1,11 +1,12 @@
-import { productsService, TicketsService } from '../services/services.js';
+import { productsService } from '../services/services.js';
 import { v4 as uuidv4 } from 'uuid';
-import cartsService from '../services/CartServices.js';
+import cartServices from '../services/CartServices.js';
 import ticketsService from '../services/ticketService.js';
+import { usersService } from '../services/services.js';
 
 const getAllCarts = async (req, res) => {
     try {
-        const carts = await cartsService.getAllCarts(); 
+        const carts = await cartServices.getAllCarts(); 
         res.status(200).json({ status: 'success', data: carts });
     } catch (error) {
         res.status(500).json({ status: 'error', message: error.message });
@@ -15,7 +16,7 @@ const getAllCarts = async (req, res) => {
 const getCartById = async (req, res) => {
     const { cid } = req.params;
     try {
-        const cart = await cartsService.getCartById(cid); // Asegúrate de que este método exista en CartService
+        const cart = await cartServices.getCartById(cid); // Asegúrate de que este método exista en CartService
         if (!cart) {
             return res
                 .status(404)
@@ -29,7 +30,7 @@ const getCartById = async (req, res) => {
 
 const createCart = async (req, res) => {
     try {
-        const newCart = await cartsService.createCart(); // Asegúrate de que este método exista en CartService
+        const newCart = await cartServices.createCart(); // Asegúrate de que este método exista en CartService
         res.status(201).json({ status: 'success', data: newCart });
     } catch (error) {
         res.status(500).json({ status: 'error', message: error.message });
@@ -48,7 +49,7 @@ const addProductToCart = async (req, res) => {
             });
         }
 
-        const cart = await cartsService.getCartById(cid); // Asegúrate de que este método exista en CartService
+        const cart = await cartServices.getCartById(cid); // Asegúrate de que este método exista en CartService
         const product = await productsService.getById(pid);
 
         if (!cart) {
@@ -62,9 +63,9 @@ const addProductToCart = async (req, res) => {
                 .json({ status: 'error', message: 'Product not found' });
         }
 
-        await cartsService.addProductToCart(cid, pid, quantity); // Asegúrate de que este método exista en CartService
+        await cartServices.addProductToCart(cid, pid, quantity); // Asegúrate de que este método exista en CartService
 
-        const updatedCart = await cartsService.getCartById(cid); // Asegúrate de que este método exista en CartService
+        const updatedCart = await cartServices.getCartById(cid); // Asegúrate de que este método exista en CartService
         res.status(200).json({
             status: 'success',
             message: 'Product added successfully',
@@ -87,7 +88,7 @@ const updateProductQuantity = async (req, res) => {
             });
         }
 
-        const cart = await cartsService.getCartById(cid); // Asegúrate de que este método exista en CartService
+        const cart = await cartServices.getCartById(cid); // Asegúrate de que este método exista en CartService
         const product = await productsService.getById(pid);
 
         if (!cart) {
@@ -101,7 +102,7 @@ const updateProductQuantity = async (req, res) => {
                 .json({ status: 'error', message: 'Product not found' });
         }
 
-        const updatedCart = await cartsService.updateProductQuantity(
+        const updatedCart = await cartServices.updateProductQuantity(
             cid,
             pid,
             quantity
@@ -121,7 +122,7 @@ const updateCartProducts = async (req, res) => {
     const { products } = req.body;
 
     try {
-        const cart = await cartsService.getCartById(cid); // Asegúrate de que este método exista en CartService
+        const cart = await cartServices.getCartById(cid); // Asegúrate de que este método exista en CartService
 
         if (!cart) {
             return res
@@ -129,7 +130,7 @@ const updateCartProducts = async (req, res) => {
                 .json({ status: 'error', message: 'Cart not found' });
         }
 
-        const updatedCart = await cartsService.updateCartProducts(
+        const updatedCart = await cartServices.updateCartProducts(
             cid,
             products
         ); // Asegúrate de que este método exista en CartService
@@ -147,7 +148,7 @@ const removeProductFromCart = async (req, res) => {
     const { cid, pid } = req.params;
 
     try {
-        const cart = await cartsService.getCartById(cid); // Asegúrate de que este método exista en CartService
+        const cart = await cartServices.getCartById(cid); // Asegúrate de que este método exista en CartService
 
         if (!cart) {
             return res
@@ -155,7 +156,7 @@ const removeProductFromCart = async (req, res) => {
                 .json({ status: 'error', message: 'Cart not found' });
         }
 
-        const updatedCart = await cartsService.removeProductFromCart(cid, pid); // Asegúrate de que este método exista en CartService
+        const updatedCart = await cartServices.removeProductFromCart(cid, pid); // Asegúrate de que este método exista en CartService
         res.status(200).json({
             status: 'success',
             message: 'Product removed successfully',
@@ -170,7 +171,7 @@ const clearCart = async (req, res) => {
     const { cid } = req.params;
 
     try {
-        const cart = await cartsService.getCartById(cid); // Asegúrate de que este método exista en CartService
+        const cart = await cartServices.getCartById(cid); // Asegúrate de que este método exista en CartService
 
         if (!cart) {
             return res
@@ -178,7 +179,7 @@ const clearCart = async (req, res) => {
                 .json({ status: 'error', message: 'Cart not found' });
         }
 
-        await cartsService.clearCart(cid); // Asegúrate de que este método exista en CartService
+        await cartServices.clearCart(cid); 
         res.status(204).end();
     } catch (error) {
         res.status(500).json({ status: 'error', message: error.message });
@@ -189,14 +190,14 @@ const purchaseCart = async (req, res) => {
     const purchaserId = req.user.id;
 
     try {
-        const purchaser = await userService.getUser(purchaserId);
+        const purchaser = await usersService.getById(purchaserId);
         if (!purchaser || !purchaser.email) {
             return res.status(404).json({ status: "error", message: "Couldn't complete purchase" });
         }
         const email = purchaser.email;
 
         const cartId = req.params.cid;
-        const cart = await cartsService.getCartById(cartId);
+        const cart = await cartServices.getCartById(cartId);
         if (!cart) {
             return res.status(404).json({ status: "error", message: "Cart not found" });
         }
@@ -205,9 +206,8 @@ const purchaseCart = async (req, res) => {
         const inStock = [];
         const outOfStock = [];
 
-        // Verificar el stock de los productos
         for (const item of cartProducts) {
-            const product = await productsService.getCartById(item.productId);
+            const product = await productsService.findById(item.product);
             if (!product) {
                 outOfStock.push({ id: item.product, quantity: item.quantity, available: 0 });
                 continue;
@@ -220,6 +220,7 @@ const purchaseCart = async (req, res) => {
                     quantity: item.quantity,
                     stock: product.stock,
                 });
+                await productsService.update(product._id, product.stock - item.quantity);
             } else {
                 outOfStock.push({
                     id: product._id,
@@ -254,17 +255,18 @@ const purchaseCart = async (req, res) => {
 
         const ticket = await ticketsService.createTicket(purchaseInfo);
 
-        for (const product of inStock) {
-            const newStock = product.stock - product.quantity;
-            await productsService.updateStock(product.id, newStock);
-        }
-
-        await cartsService.clearCart(cartId);
+        const remainingProducts = cartProducts.filter(item => 
+            !inStock.some(stockItem => stockItem.id.toString() === item.product.toString())
+        );
+        await cartServices.updateCartProducts(cartId, remainingProducts);
 
         res.status(201).json({
             status: "success",
             message: "Purchase completed successfully",
-            payload: ticket,
+            payload: {
+                ticket,
+                outOfStock,
+            },
         });
     } catch (error) {
         res.status(500).json({ status: 'error', message: error.message });

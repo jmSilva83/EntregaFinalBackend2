@@ -108,10 +108,24 @@ const deleteProduct = async (req, res) => {
     }
 };
 
+const updateStock = async (productId, newStock) => {
+    try {
+        const product = await product.findById(productId);
+        if (!product) {
+            throw new Error('Product not found');
+        }
+        product.stock = newStock;
+        await product.save();
+    } catch (error) {
+        throw new Error(`Error updating stock: ${error.message}`);
+    }
+};
+
 export default {
     getProducts,
     getProductById,
     createProduct,
     updateProduct,
     deleteProduct,
+    updateStock,
 };

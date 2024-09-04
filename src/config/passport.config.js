@@ -6,6 +6,7 @@ import AuthService from '../services/authService.js';
 import config from './config.js';
 
 const initializePassportConfig = () => {
+    
     passport.use(
         'register',
         new LocalStrategy(

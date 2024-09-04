@@ -3,7 +3,6 @@ import config from '../config/config.js';
 
 const register = async (req, res) => {
     try {
-        // Supongamos que req.user es el usuario registrado
         const user = req.user;
         const sessionUser = {
             name: `${user.firstName} ${user.lastName}`,
