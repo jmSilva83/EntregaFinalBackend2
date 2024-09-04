@@ -49,8 +49,8 @@ const addProductToCart = async (req, res) => {
             });
         }
 
-        const cart = await cartServices.getCartById(cid); // Asegúrate de que este método exista en CartService
-        const product = await productsService.getById(pid);
+        const cart = await cartServices.getCartById(cid); 
+        const product = await productsService.findById(pid);
 
         if (!cart) {
             return res
@@ -63,9 +63,9 @@ const addProductToCart = async (req, res) => {
                 .json({ status: 'error', message: 'Product not found' });
         }
 
-        await cartServices.addProductToCart(cid, pid, quantity); // Asegúrate de que este método exista en CartService
+        await cartServices.addProductToCart(cid, pid, quantity); 
 
-        const updatedCart = await cartServices.getCartById(cid); // Asegúrate de que este método exista en CartService
+        const updatedCart = await cartServices.getCartById(cid); 
         res.status(200).json({
             status: 'success',
             message: 'Product added successfully',
@@ -88,7 +88,7 @@ const updateProductQuantity = async (req, res) => {
             });
         }
 
-        const cart = await cartServices.getCartById(cid); // Asegúrate de que este método exista en CartService
+        const cart = await cartServices.getCartById(cid); 
         const product = await productsService.getById(pid);
 
         if (!cart) {
@@ -106,7 +106,7 @@ const updateProductQuantity = async (req, res) => {
             cid,
             pid,
             quantity
-        ); // Asegúrate de que este método exista en CartService
+        ); 
         res.status(200).json({
             status: 'success',
             message: 'Product quantity updated successfully',
@@ -122,7 +122,7 @@ const updateCartProducts = async (req, res) => {
     const { products } = req.body;
 
     try {
-        const cart = await cartServices.getCartById(cid); // Asegúrate de que este método exista en CartService
+        const cart = await cartServices.getCartById(cid); 
 
         if (!cart) {
             return res
@@ -133,7 +133,7 @@ const updateCartProducts = async (req, res) => {
         const updatedCart = await cartServices.updateCartProducts(
             cid,
             products
-        ); // Asegúrate de que este método exista en CartService
+        ); 
         res.status(200).json({
             status: 'success',
             message: 'Cart products updated successfully',
@@ -148,7 +148,7 @@ const removeProductFromCart = async (req, res) => {
     const { cid, pid } = req.params;
 
     try {
-        const cart = await cartServices.getCartById(cid); // Asegúrate de que este método exista en CartService
+        const cart = await cartServices.getCartById(cid); 
 
         if (!cart) {
             return res
@@ -156,7 +156,7 @@ const removeProductFromCart = async (req, res) => {
                 .json({ status: 'error', message: 'Cart not found' });
         }
 
-        const updatedCart = await cartServices.removeProductFromCart(cid, pid); // Asegúrate de que este método exista en CartService
+        const updatedCart = await cartServices.removeProductFromCart(cid, pid); 
         res.status(200).json({
             status: 'success',
             message: 'Product removed successfully',
@@ -171,7 +171,7 @@ const clearCart = async (req, res) => {
     const { cid } = req.params;
 
     try {
-        const cart = await cartServices.getCartById(cid); // Asegúrate de que este método exista en CartService
+        const cart = await cartServices.getCartById(cid); 
 
         if (!cart) {
             return res

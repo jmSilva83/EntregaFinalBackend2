@@ -11,7 +11,7 @@ class CartsRouter extends BaseRouter {
         this.post(
             '/:cid/products/:pid',
             ['PUBLIC'],
-            authRoles(['user']),
+            
             cartsController.addProductToCart
         );
         this.put(
