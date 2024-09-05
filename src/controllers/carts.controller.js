@@ -3,6 +3,7 @@ import { v4 as uuidv4 } from 'uuid';
 import cartServices from '../services/CartServices.js';
 import ticketsService from '../services/ticketService.js';
 import { usersService } from '../services/services.js';
+import mongoose from 'mongoose';
 
 const getAllCarts = async (req, res) => {
     try {
@@ -51,6 +52,7 @@ const addProductToCart = async (req, res) => {
 
         const cart = await cartServices.getCartById(cid); 
         const product = await productsService.findById(pid);
+        console.log(product.stock);
 
         if (!cart) {
             return res
@@ -63,9 +65,35 @@ const addProductToCart = async (req, res) => {
                 .json({ status: 'error', message: 'Product not found' });
         }
 
-        await cartServices.addProductToCart(cid, pid, quantity); 
+        // Verificar si hay suficiente stock disponible
+        const existingProductInCart = cart.products.find(p => p.product.toString() === pid.toString());
+        const quantityInCart = existingProductInCart ? existingProductInCart.quantity : 0;
+
+        const availableStock = product.stock - quantityInCart;
+
+        if (quantity > availableStock) {
+            return res.status(400).json({
+                status: 'error',
+                message: `Not enough stock. Only ${availableStock} units available.`,
+            });
+        }
+
+        // Si el producto ya está en el carrito, aumentar la cantidad
+        if (existingProductInCart) {
+            existingProductInCart.quantity += quantity;
+        } else {
+            // Si no está en el carrito, agregarlo con la cantidad deseada
+            cart.products.push({ product: new mongoose.Types.ObjectId(pid), quantity });
+        }
+
+        await cart.save();
+
+        // No olvides actualizar el stock del producto en la base de datos
+        product.stock -= quantity;
+        await product.save();
 
         const updatedCart = await cartServices.getCartById(cid); 
+
         res.status(200).json({
             status: 'success',
             message: 'Product added successfully',
@@ -208,6 +236,7 @@ const purchaseCart = async (req, res) => {
 
         for (const item of cartProducts) {
             const product = await productsService.findById(item.product);
+            console.log(product.stock);
             if (!product) {
                 outOfStock.push({ id: item.product, quantity: item.quantity, available: 0 });
                 continue;

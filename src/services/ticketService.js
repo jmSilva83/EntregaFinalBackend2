@@ -1,4 +1,4 @@
-import TicketRepository  from '../repositories/TicketRepository.js';
+import TicketRepository from '../repositories/TicketRepository.js';
 
 class TicketService {
     constructor() {
@@ -6,7 +6,7 @@ class TicketService {
     }
 
     async createTicket(data) {
-        return this.ticketRepository.create(data);
+        return this.ticketRepository.createTicket(data);  // Aquí se usa el nombre correcto del método
     }
 }
 

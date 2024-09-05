@@ -13,5 +13,3 @@ export default class TicketRepository {
         return await TicketDAO.getAllTickets();
     }
 }
-
-
