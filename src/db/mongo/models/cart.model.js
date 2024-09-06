@@ -18,9 +18,9 @@ const schema = new mongoose.Schema({
   ]
 },{timestamps:true});
 
-// schema.pre(['find', 'findOne', 'findById'], function () {
-//   this.populate('products.product');
-// });
+schema.pre(['find', 'findOne', 'findById'], function () {
+  this.populate('products.product');
+});
 
 const cartModel = mongoose.model(collection, schema);
 
